@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}AgriPulse Rwanda — AI-Powered Agricultural Intelligence{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold text-success">AgriPulse Rwanda</h1>
+    <p class="lead">"Produce smarter. Lose less. Sell better."</p>
+    <p class="text-muted">AI-powered decision support grounded in NISR official data</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">🌱 Engine 1: Input Optimizer</h5>
+                <p class="card-text">Data-supported input patterns (seed + organic + inorganic + pesticide) tailored by district & crop.</p>
+                <a href="/input-optimizer" class="btn btn-success">Try Engine</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">📊 Engine 2: Yield Predictor</h5>
+                <p class="card-text">Estimated yield with confidence intervals + Explainable AI factor breakdown.</p>
+                <a href="/yield-predictor" class="btn btn-success">Try Engine</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">💰 Engine 3: Market Intelligence</h5>
+                <p class="card-text">Sell-vs-store recommendations, price trends, and post-harvest loss risk alerts.</p>
+                <a href="/market-intelligence" class="btn btn-success">Try Engine</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

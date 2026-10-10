@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — AgriPulse Rwanda{% endblock %}
+{% block content %}
+<h2 class="text-success mb-4">📈 Agricultural Planner Dashboard</h2>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-success">2.16M</h3>
+                <small class="text-muted">Agricultural Households</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-success">3.59M</h3>
+                <small class="text-muted">Farmers</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-success">1.38M</h3>
+                <small class="text-muted">Hectares (Agricultural Land)</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm text-center">
+            <div class="card-body">
+                <h3 class="text-success">64.6%</h3>
+                <small class="text-muted">Improved Seed Adoption</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Input Adoption by Province</h5>
+                <canvas id="inputChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Post-Harvest Loss Risk Distribution</h5>
+                <canvas id="riskChart" height="220"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mt-4">
+    <div class="card-body">
+        <h5>Data Sources</h5>
+        <ul class="mb-0">
+            <li>NISR Agricultural Household Survey (AHS) 2024</li>
+            <li>NISR Seasonal Agricultural Survey (SAS) 2026 Season A</li>
+            <li>NISR Seasonal Agricultural Survey (SAS) 2026 Season B</li>
+            <li>CHIRPS rainfall / temperature (spatial-temporal integration)</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Input adoption by province (AHS 2024 Table 19)
+const inputCtx = document.getElementById('inputChart').getContext('2d');
+new Chart(inputCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Kigali', 'South', 'West', 'North', 'East'],
+        datasets: [
+            { label: 'Improved Seeds %', data: [66.6, 63.4, 55.6, 65.3, 71.2], backgroundColor: '#198754' },
+            { label: 'Organic Fert. %', data: [93.3, 96.3, 95.7, 97.8, 88.7], backgroundColor: '#6cc070' },
+            { label: 'Inorganic Fert. %', data: [40.4, 58.7, 74.5, 72.6, 65.8], backgroundColor: '#a3d9a5' },
+            { label: 'Pesticide %', data: [37.8, 48.8, 38.9, 56.6, 30.2], backgroundColor: '#f4a261' },
+        ]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+
+// Risk distribution
+const riskCtx = document.getElementById('riskChart').getContext('2d');
+new Chart(riskCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Low Risk', 'Medium Risk', 'High Risk'],
+        datasets: [{
+            data: [55, 30, 15],
+            backgroundColor: ['#198754', '#f4a261', '#e63946'],
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

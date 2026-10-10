@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Input Optimizer — AgriPulse Rwanda{% endblock %}
+{% block content %}
+<h2 class="text-success mb-4">🌱 Engine 1: Input Optimizer</h2>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">District</label>
+                    <select id="district" class="form-select"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Crop</label>
+                    <select id="crop" class="form-select">
+                        <option>Maize</option><option>Beans</option>
+                        <option>Irish potato</option><option>Cassava</option>
+                        <option>Sweet potato</option><option>Paddy rice</option>
+                        <option>Wheat</option><option>Vegetables</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Season</label>
+                    <select id="season" class="form-select">
+                        <option value="A">Season A</option>
+                        <option value="B">Season B</option>
+                        <option value="C">Season C</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Farm Size (ha)</label>
+                    <input type="number" id="farm_size" class="form-control" value="0.5" step="0.1">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Budget Level</label>
+                    <select id="budget" class="form-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <button onclick="runOptimizer()" class="btn btn-success w-100">Get Recommendations</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div id="results" class="card shadow-sm d-none">
+            <div class="card-body">
+                <h5>Recommended Input Combinations</h5>
+                <div id="recommendations"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDistricts() {
+    const res = await fetch('/api/districts');
+    const districts = await res.json();
+    const sel = document.getElementById('district');
+    districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d; opt.textContent = d;
+        sel.appendChild(opt);
+    });
+}
+loadDistricts();
+
+async function runOptimizer() {
+    const payload = {
+        district: document.getElementById('district').value,
+        crop: document.getElementById('crop').value,
+        season: document.getElementById('season').value,
+        farm_size_ha: parseFloat(document.getElementById('farm_size').value),
+        budget_level: document.getElementById('budget').value,
+    };
+    const res = await fetch('/api/input-optimizer', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    const container = document.getElementById('recommendations');
+    container.innerHTML = '';
+    if (data.success) {
+        data.recommendations.forEach((r, i) => {
+            const s = r.strategy;
+            const div = document.createElement('div');
+            div.className = 'border rounded p-3 mb-2' + (i === 0 ? ' border-success bg-light' : '');
+            div.innerHTML = `
+                <div class="d-flex justify-content-between">
+                    <strong>${i === 0 ? '⭐ Best' : 'Option ' + (i+1)}</strong>
+                    <span class="badge bg-success">${r.expected_yield_kg_ha} kg/ha</span>
+                </div>
+                <small class="text-muted">Range: ${r.yield_lower_kg_ha} – ${r.yield_upper_kg_ha} kg/ha</small>
+                <div class="mt-2 small">
+                    ${s.improved_seed ? '✅' : '❌'} Improved Seeds &nbsp;
+                    ${s.organic ? '✅' : '❌'} Organic Fertilizer &nbsp;
+                    ${s.inorganic ? '✅' : '❌'} Inorganic Fertilizer &nbsp;
+                    ${s.pesticide ? '✅' : '❌'} Pesticide
+                </div>
+            `;
+            container.appendChild(div);
+        });
+        document.getElementById('results').classList.remove('d-none');
+    }
+}
+</script>
+{% endblock %}

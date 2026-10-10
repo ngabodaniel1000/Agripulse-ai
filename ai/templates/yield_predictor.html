@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block title %}Yield Predictor — AgriPulse Rwanda{% endblock %}
+{% block content %}
+<h2 class="text-success mb-4">📊 Engine 2: Yield Predictor</h2>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label">District</label>
+                    <select id="district" class="form-select"></select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Crop</label>
+                    <select id="crop" class="form-select">
+                        <option>Maize</option><option>Beans</option>
+                        <option>Irish potato</option><option>Cassava</option>
+                        <option>Sweet potato</option><option>Paddy rice</option>
+                        <option>Banana</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Season</label>
+                    <select id="season" class="form-select">
+                        <option value="A">Season A</option>
+                        <option value="B">Season B</option>
+                        <option value="C">Season C</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Soil Type</label>
+                    <select id="soil" class="form-select">
+                        <option>Loam</option><option>Clay</option>
+                        <option>Sandy</option><option>Volcanic</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Farm Size (ha)</label>
+                        <input type="number" id="farm_size" class="form-control" value="0.5" step="0.1">
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Elevation (m)</label>
+                        <input type="number" id="elevation" class="form-control" value="1600">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Rainfall (mm)</label>
+                        <input type="number" id="rainfall" class="form-control" value="450">
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Temp (°C)</label>
+                        <input type="number" id="temperature" class="form-control" value="21">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label d-block">Inputs Used</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="seed">
+                        <label class="form-check-label" for="seed">Improved Seeds</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="organic">
+                        <label class="form-check-label" for="organic">Organic Fert.</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inorganic">
+                        <label class="form-check-label" for="inorganic">Inorganic Fert.</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="pesticide">
+                        <label class="form-check-label" for="pesticide">Pesticide</label>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label d-block">Practices</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="irrigation">
+                        <label class="form-check-label" for="irrigation">Irrigation</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="erosion">
+                        <label class="form-check-label" for="erosion">Erosion Control</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="agroforestry">
+                        <label class="form-check-label" for="agroforestry">Agroforestry</label>
+                    </div>
+                </div>
+                <button onclick="predictYield()" class="btn btn-success w-100">Predict Yield</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div id="resultCard" class="card shadow-sm d-none">
+            <div class="card-body">
+                <h4 class="text-success" id="predictedYield"></h4>
+                <p class="text-muted" id="yieldRange"></p>
+                <hr>
+                <h6>🔍 Why this prediction? (Explainable AI)</h6>
+                <canvas id="xaiChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDistricts() {
+    const res = await fetch('/api/districts');
+    const districts = await res.json();
+    const sel = document.getElementById('district');
+    districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d; opt.textContent = d;
+        sel.appendChild(opt);
+    });
+}
+loadDistricts();
+
+let xaiChartInstance = null;
+
+async function predictYield() {
+    const payload = {
+        district: document.getElementById('district').value,
+        crop: document.getElementById('crop').value,
+        season: document.getElementById('season').value,
+        soil_type: document.getElementById('soil').value,
+        farm_size_ha: parseFloat(document.getElementById('farm_size').value),
+        elevation_m: parseFloat(document.getElementById('elevation').value),
+        rainfall_mm: parseFloat(document.getElementById('rainfall').value),
+        temperature_c: parseFloat(document.getElementById('temperature').value),
+        used_improved_seed: document.getElementById('seed').checked ? 1 : 0,
+        used_organic_fertilizer: document.getElementById('organic').checked ? 1 : 0,
+        used_inorganic_fertilizer: document.getElementById('inorganic').checked ? 1 : 0,
+        used_pesticide: document.getElementById('pesticide').checked ? 1 : 0,
+        used_irrigation: document.getElementById('irrigation').checked ? 1 : 0,
+        used_erosion_control: document.getElementById('erosion').checked ? 1 : 0,
+        used_agroforestry: document.getElementById('agroforestry').checked ? 1 : 0,
+    };
+    const res = await fetch('/api/yield-predictor', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+        const p = data.prediction;
+        document.getElementById('predictedYield').textContent =
+            `🌾 ${p.predicted_yield_kg_ha} kg/ha`;
+        document.getElementById('yieldRange').textContent =
+            `Confidence range: ${p.yield_lower_kg_ha} – ${p.yield_upper_kg_ha} kg/ha (${p.confidence_level_pct}% confidence)`;
+        document.getElementById('resultCard').classList.remove('d-none');
+
+        // XAI chart
+        const imp = data.explanation.factor_importance_pct;
+        const labels = Object.keys(imp).slice(0, 8);
+        const values = labels.map(k => imp[k]);
+
+        if (xaiChartInstance) xaiChartInstance.destroy();
+        const ctx = document.getElementById('xaiChart').getContext('2d');
+        xaiChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Importance (%)',
+                    data: values,
+                    backgroundColor: '#198754'
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: {legend: {display: false}},
+                scales: {x: {beginAtZero: true, max: 100}}
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

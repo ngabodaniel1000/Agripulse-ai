@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Market Intelligence — AgriPulse Rwanda{% endblock %}
+{% block content %}
+<h2 class="text-success mb-4">💰 Engine 3: Market & Post-Harvest Intelligence</h2>
+<div class="row">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="mb-2">
+                    <label class="form-label">District</label>
+                    <select id="district" class="form-select"></select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Crop</label>
+                    <select id="crop" class="form-select">
+                        <option>Maize</option><option>Beans</option>
+                        <option>Irish potato</option><option>Cassava</option>
+                        <option>Sweet potato</option><option>Paddy rice</option>
+                        <option>Banana</option><option>Vegetables</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Season</label>
+                    <select id="season" class="form-select">
+                        <option value="A">Season A</option>
+                        <option value="B">Season B</option>
+                        <option value="C">Season C</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Harvest Quantity (kg)</label>
+                    <input type="number" id="qty" class="form-control" value="1000">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Current Price (RWF/kg)</label>
+                    <input type="number" id="price" class="form-control" value="500">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Price Trend (%)</label>
+                    <input type="number" id="trend" class="form-control" value="0" step="0.5">
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Storage Method</label>
+                    <select id="storage" class="form-select">
+                        <option>Traditional granary</option>
+                        <option>Hermetic bag</option>
+                        <option>Warehouse</option>
+                        <option>Open air</option>
+                        <option>Improved silo</option>
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label">Storage Duration (weeks)</label>
+                    <input type="number" id="duration" class="form-control" value="4">
+                </div>
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Humidity (%)</label>
+                        <input type="number" id="humidity" class="form-control" value="65">
+                    </div>
+                    <div class="col-6 mb-2">
+                        <label class="form-label">Temp (°C)</label>
+                        <input type="number" id="temperature" class="form-control" value="22">
+                    </div>
+                </div>
+                <button onclick="runMarket()" class="btn btn-success w-100">Get Recommendation</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div id="resultCard" class="card shadow-sm d-none">
+            <div class="card-body">
+                <h3 id="recommendation" class="fw-bold"></h3>
+                <p id="probabilities" class="text-muted"></p>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <small class="text-muted">Sell Now</small>
+                        <h5 id="revenueNow"></h5>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted">Store Revenue</small>
+                        <h5 id="revenueStore"></h5>
+                    </div>
+                    <div class="col-4">
+                        <small class="text-muted">Net Gain</small>
+                        <h5 id="netGain"></h5>
+                    </div>
+                </div>
+                <hr>
+                <p><strong>Post-Harvest Loss Risk:</strong> <span id="risk"></span> (<span id="lossRate"></span>%)</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+async function loadDistricts() {
+    const res = await fetch('/api/districts');
+    const districts = await res.json();
+    const sel = document.getElementById('district');
+    districts.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d; opt.textContent = d;
+        sel.appendChild(opt);
+    });
+}
+loadDistricts();
+
+async function runMarket() {
+    const payload = {
+        district: document.getElementById('district').value,
+        crop: document.getElementById('crop').value,
+        season: document.getElementById('season').value,
+        harvest_quantity_kg: parseFloat(document.getElementById('qty').value),
+        current_price_rwf_kg: parseFloat(document.getElementById('price').value),
+        price_trend_pct: parseFloat(document.getElementById('trend').value),
+        storage_method: document.getElementById('storage').value,
+        storage_duration_weeks: parseInt(document.getElementById('duration').value),
+        storage_cost_per_kg_week: 2,
+        humidity_pct: parseFloat(document.getElementById('humidity').value),
+        temperature_c: parseFloat(document.getElementById('temperature').value),
+        total_loss_rate_pct: 5,
+    };
+    const res = await fetch('/api/market-intelligence', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+        const r = data.result;
+        const recEl = document.getElementById('recommendation');
+        recEl.textContent = r.recommendation === 'STORE' ? '📦 STORE' : '💵 SELL NOW';
+        recEl.className = 'fw-bold ' + (r.recommendation === 'STORE' ? 'text-primary' : 'text-success');
+        document.getElementById('probabilities').textContent =
+            `Store: ${r.store_probability_pct}% | Sell: ${r.sell_probability_pct}%`;
+        document.getElementById('revenueNow').textContent =
+            r.revenue_if_sell_now_rwf.toLocaleString() + ' RWF';
+        document.getElementById('revenueStore').textContent =
+            r.revenue_if_store_rwf.toLocaleString() + ' RWF';
+        document.getElementById('netGain').textContent =
+            (r.net_gain_from_storing_rwf >= 0 ? '+' : '') +
+            r.net_gain_from_storing_rwf.toLocaleString() + ' RWF';
+        document.getElementById('risk').textContent = r.post_harvest_loss_risk;
+        document.getElementById('lossRate').textContent = r.loss_rate_pct;
+        document.getElementById('resultCard').classList.remove('d-none');
+    }
+}
+</script>
+{% endblock %}

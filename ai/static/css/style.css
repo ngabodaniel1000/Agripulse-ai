@@ -1,0 +1,77 @@
+/* static/css/style.css */
+
+body {
+    background-color: #f7faf8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #223027;
+}
+
+.navbar-brand {
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.12);
+}
+
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+    border-radius: 8px;
+}
+
+.btn-success:hover {
+    background-color: #146c43;
+}
+
+h1, h2, h4, h5 {
+    font-weight: 600;
+}
+
+.lead {
+    color: #4b5d52;
+}
+
+.form-label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #3b4c41;
+}
+
+.form-select, .form-control {
+    border-radius: 8px;
+}
+
+.badge.bg-success {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+}
+
+footer small {
+    color: #8a9b90;
+}
+
+#xaiChart {
+    max-height: 320px;
+}
+
+.recommendation-card {
+    border-left: 4px solid #198754;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    h1.display-4 {
+        font-size: 2rem;
+    }
+    .card {
+        margin-bottom: 1rem;
+    }
+}
