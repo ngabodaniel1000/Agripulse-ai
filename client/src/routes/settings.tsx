@@ -1,0 +1,3 @@
+import {createFileRoute} from '@tanstack/react-router'
+import {SettingsPage} from '@/components/Dashboard'
+export const Route=createFileRoute('/settings')({ssr:false,head:()=>({meta:[{title:'Workspace Settings | NISR Agricultural Intelligence'},{name:'description',content:'Set role and advisory geography context for the NISR agricultural intelligence workspace.'},{property:'og:title',content:'Workspace Settings | NISR Agricultural Intelligence'},{property:'og:description',content:'Manage session preferences and download a workspace context note.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:SettingsPage})

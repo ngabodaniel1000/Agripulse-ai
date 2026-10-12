@@ -1,0 +1,3 @@
+import {createFileRoute} from '@tanstack/react-router'
+import {Opportunities} from '@/components/Dashboard'
+export const Route=createFileRoute('/opportunities')({ssr:false,head:()=>({meta:[{title:'Crop Opportunities | NISR Agricultural Intelligence'},{name:'description',content:'Identify import substitution and nutrition priorities from Rwanda Food Balance Sheets and prepare campaign briefs.'},{property:'og:title',content:'Crop Opportunities | NISR Agricultural Intelligence'},{property:'og:description',content:'Explore vegetable oils, sugar and fish import dependency and actionable promotion drafts.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Opportunities})

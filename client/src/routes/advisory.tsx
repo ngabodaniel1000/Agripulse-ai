@@ -1,0 +1,3 @@
+import {createFileRoute} from '@tanstack/react-router'
+import {Advisory} from '@/components/Dashboard'
+export const Route=createFileRoute('/advisory')({ssr:false,head:()=>({meta:[{title:'Soil–Climate Advisory | NISR Agricultural Intelligence'},{name:'description',content:'Prepare a Rwanda soil-climate field assessment from user-reported soil tests and plot measurements.'},{property:'og:title',content:'Soil–Climate Advisory | NISR Agricultural Intelligence'},{property:'og:description',content:'Five-stage field assessment with downloadable PDF and SMS-ready summary for local review.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Advisory})
