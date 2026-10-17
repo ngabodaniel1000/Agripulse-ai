@@ -1,3 +1,0 @@
-import {createFileRoute} from '@tanstack/react-router'
-import {Reports} from '@/components/Dashboard'
-export const Route=createFileRoute('/reports')({ssr:false,head:()=>({meta:[{title:'Source Reports | NISR Agricultural Intelligence'},{name:'description',content:'Read original NISR agricultural, food balance, enterprise, population, industrial production and trade reports.'},{property:'og:title',content:'Source Reports | NISR Agricultural Intelligence'},{property:'og:description',content:'Trace dashboard statistics to the nine uploaded source publications and export crop data.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Reports})

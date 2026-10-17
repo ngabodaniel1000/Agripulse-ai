@@ -1,17 +1,33 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter, rootRouteId } from "@tanstack/react-router";
-import { describe, expect, it } from "vitest";
+import { describe, it, expect } from "@jest/globals";
 
-import { routeTree } from "@/routeTree.gen";
+// Next.js App Router doesn't use a client-side route tree that can be
+// instantiated in unit tests. Route resolution is a build-time / server
+// concern. We verify instead that the page components exported by the
+// route modules exist and are functions.
 
-// Match routes without running loaders or rendering: loaders may need a server or
-// network the test run lacks, and jsdom never loads the stylesheets React waits on.
 describe("App routing", () => {
-  it("matches a page for / instead of falling back to not found", () => {
-    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+  it("exports a default component for the index page", async () => {
+    const mod = await import("@/app/page");
+    expect(typeof (mod.default ?? mod)).toBe("function");
+  });
 
-    const matches = router.matchRoutes("/");
+  it("exports a default component for the advisory page", async () => {
+    const mod = await import("@/app/advisory/page");
+    expect(typeof (mod.default ?? mod)).toBe("function");
+  });
 
-    expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
+  it("exports a default component for the opportunities page", async () => {
+    const mod = await import("@/app/opportunities/page");
+    expect(typeof (mod.default ?? mod)).toBe("function");
+  });
+
+  it("exports a default component for the reports page", async () => {
+    const mod = await import("@/app/reports/page");
+    expect(typeof (mod.default ?? mod)).toBe("function");
+  });
+
+  it("exports a default component for the settings page", async () => {
+    const mod = await import("@/app/settings/page");
+    expect(typeof (mod.default ?? mod)).toBe("function");
   });
 });

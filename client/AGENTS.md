@@ -9,7 +9,7 @@
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
 
-- Use TanStack file routes for each dashboard module, with a shared dashboard shell, so sections have distinct URLs and source-specific metadata.
+- Use Next.js App Router routes for each dashboard module, with a shared dashboard shell, so sections have distinct URLs and source-specific metadata.
 - Keep uploaded report statistics in a typed data module and never derive missing market or agronomic metrics without complete inputs, to preserve statistical integrity.
 - Keep filters in a session-only Zustand store and generate documents in the browser, because the current report-based dashboard has no connected account or live-data service.
 - Lazy-load React Three Fiber province geometry from geoBoundaries ADM1 data on client-only routes, because WebGL must not run during server rendering.

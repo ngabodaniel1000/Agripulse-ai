@@ -1,3 +1,0 @@
-import {createFileRoute} from '@tanstack/react-router'
-import {Market} from '@/components/Dashboard'
-export const Route=createFileRoute('/')({ssr:false,head:()=>({meta:[{title:'Market Dominance | NISR Agricultural Intelligence'},{name:'description',content:'Explore Rwanda crop adoption, food self-sufficiency and import substitution opportunities from NISR reports.'},{property:'og:title',content:'Market Dominance | NISR Agricultural Intelligence'},{property:'og:description',content:'Source-backed crop adoption and national agricultural decision support for Rwanda.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),component:Market})
