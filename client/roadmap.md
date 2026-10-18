@@ -1,4 +1,5 @@
 # NISR dashboard
+
 - [x] Animate the homepage crop histogram and verify filtering and reduced-motion behavior.
 - [x] Build blue-and-white dashboard shell and market overview.
 - [x] Verify uploaded reports and expose source documents.

@@ -3,7 +3,10 @@ import { crops, opportunities, sources } from "./agriculture";
 
 describe("NISR report data", () => {
   it("retains Table 16 crop seasons", () => {
-    expect(crops.find((x) => x.name === "Sweet potato")).toMatchObject({ adoption: 55.4, season: "C" });
+    expect(crops.find((x) => x.name === "Sweet potato")).toMatchObject({
+      adoption: 55.4,
+      season: "C",
+    });
     expect(crops.find((x) => x.name === "Beans")).toMatchObject({ adoption: 89.8, season: "A" });
   });
 

@@ -60,314 +60,15 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Toaster, toast } from "sonner";
 import { CropHistogram } from "@/components/CropHistogram";
-import {
-  crops,
-  inputs,
-  sources,
-  opportunities,
-  provinceNames,
-} from "@/data/agriculture";
+import { crops, inputs, sources, opportunities, provinceNames } from "@/data/agriculture";
 import { useDashboard } from "@/lib/dashboard-store";
 import { exportPDF, exportCSV } from "@/lib/exports";
+import { Choice, Panel, PageTitle, Shell } from "@/components/Shell";
 import fields from "@/assets/rwanda-fields.jpg";
 
+export { Choice, Panel, PageTitle, Shell } from "@/components/Shell";
+
 const ProvinceMap = lazy(() => import("@/components/ProvinceMap"));
-
-const nav = [
-  { to: "/", name: "Market dominance", icon: BarChart3 },
-  { to: "/opportunities", name: "Under-supplied crops", icon: Sprout },
-  { to: "/advisory", name: "Soil–climate advisory", icon: Layers },
-  { to: "/reports", name: "Reports & exports", icon: FileText },
-] as const;
-
-export function Choice({
-  value,
-  onChange,
-  options,
-  label,
-  className = "",
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-  label: string;
-  className?: string;
-}) {
-  return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger aria-label={label} className={className}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((x) => (
-          <SelectItem key={x} value={x}>
-            {x}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  );
-}
-
-export function Shell({ children }: { children: ReactNode }) {
-  const path = usePathname();
-  const { search, setSearch, role } = useDashboard();
-  const [mobile, setMobile] = useState(false);
-  const [alerts, setAlerts] = useState(false);
-  const [help, setHelp] = useState(false);
-  const title = nav.find((x) => x.to === path)?.name ?? "Settings";
-
-  return (
-    <div className="app-shell">
-      <aside className={`sidebar ${mobile ? "open" : ""}`}>
-        <Link
-          href="/"
-          className="brand"
-          onClick={() => setMobile(false)}
-        >
-          <div className="brand-mark">
-            <span />
-            <span />
-            <span />
-            <span />
-          </div>
-          <div>
-            <div className="brand-name">NISR</div>
-            <div className="brand-sub">
-              National Institute of
-              <br />
-              Statistics of Rwanda
-            </div>
-          </div>
-        </Link>
-        <div className="nav-label">AGRICULTURAL INTELLIGENCE</div>
-        <nav>
-          {nav.map((n) => (
-            <Link
-              key={n.to}
-              href={n.to}
-              className={`nav-link ${path === n.to ? "active" : ""}`}
-              onClick={() => setMobile(false)}
-            >
-              <n.icon />
-              {n.name}
-              {n.to === "/opportunities" && (
-                <span className="nav-count">3</span>
-              )}
-            </Link>
-          ))}
-        </nav>
-        <div className="nav-label">WORKSPACE</div>
-        <Link
-          href="/settings"
-          className={`nav-link ${path === "/settings" ? "active" : ""}`}
-          onClick={() => setMobile(false)}
-        >
-          <Settings />
-          Settings
-        </Link>
-        <Button
-          variant="ghost"
-          className="nav-link w-full justify-start"
-          onClick={() => setHelp(true)}
-        >
-          <CircleHelp />
-          Help & data guide
-        </Button>
-        <div className="sidebar-bottom">
-          <div className="data-status">
-            <span className="status-dot" />
-            <strong className="text-xs font-medium">Official report sources</strong>
-            <p>9 documents · 2022–2025 editions</p>
-            <Link
-              href="/reports"
-              className="text-primary text-[10px] mt-2 flex items-center gap-1"
-            >
-              View data sources <ArrowUpRight size={12} />
-            </Link>
-          </div>
-          <div className="profile">
-            <div className="avatar">NA</div>
-            <div>
-              <strong>{role}</strong>
-              <small>National workspace</small>
-            </div>
-            <ChevronDown size={13} className="ml-auto text-muted-foreground" />
-          </div>
-        </div>
-      </aside>
-      <div className="main-wrap">
-        <header className="topbar">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="mobile-menu"
-            aria-label={mobile ? "Close navigation" : "Open navigation"}
-            onClick={() => setMobile(!mobile)}
-          >
-            {mobile ? <X /> : <Menu />}
-          </Button>
-          <div className="breadcrumb">
-            Agricultural intelligence <ChevronRight size={12} />
-            <strong>{title}</strong>
-          </div>
-          <div className="top-actions">
-            <label className="global-search">
-              <Search size={15} />
-              <input
-                aria-label="Search crops and reports"
-                placeholder="Search crops, reports…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </label>
-            <span className="language">
-              <Globe2 size={14} /> English
-            </span>
-            <span className="h-5 border-l border-border" />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="notification"
-              aria-label="View statistical alerts"
-              title="Statistical alerts"
-              onClick={() => setAlerts(true)}
-            >
-              <Bell size={17} />
-            </Button>
-            <div className="avatar">NA</div>
-          </div>
-        </header>
-        <main className="page">
-          {children}
-          <footer className="footer">
-            <div className="footer-sources">
-              <span>DATA SOURCES</span>
-              {["AHS 2024", "FBS 2025 edition", "IBES 2024", "RPHC 2022", "Trade 2025"].map(
-                (x) => (
-                  <Link key={x} href="/reports">
-                    {x}
-                  </Link>
-                ),
-              )}
-            </div>
-            <span>
-              <ShieldCheck size={10} className="inline mr-1" />
-              Source-based statistics · National coverage
-            </span>
-          </footer>
-        </main>
-      </div>
-      <Toaster position="bottom-right" />
-      <Dialog open={alerts} onOpenChange={setAlerts}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Statistical watchlist</DialogTitle>
-            <DialogDescription>
-              Indicators from uploaded reports, not live alerts.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="alert-list">
-            <div className="alert-item">
-              <strong>High import dependency</strong>
-              <p>
-                Vegetable oils: 210%; sugar: 102.2%; fish: 81%. Evaluate import
-                substitution opportunities. FBS 2025 edition.
-              </p>
-            </div>
-            <div className="alert-item">
-              <strong>Dietary diversification priority</strong>
-              <p>
-                Carbohydrates account for 77.8% of available dietary energy,
-                while fat accounts for 12.0%.
-              </p>
-            </div>
-            <div className="alert-item">
-              <strong>Irrigation coverage</strong>
-              <p>14.1% of agricultural households use irrigation. AHS 2024.</p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={help} onOpenChange={setHelp}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Data & methodology</DialogTitle>
-            <DialogDescription>
-              What these indicators represent.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="document-preview">
-            {`Crop adoption is the percentage of agricultural households growing a crop, not a market share. Households can grow multiple crops, so percentages do not sum to 100%.
-
-The dashboard combines different reference periods. The FBS edition reports 2025 indicators and historical comparisons.
-
-Import dependency ratios can exceed 100% because of exports, stock changes and the denominator used in the report.
-
-No comparable crop price series, district crop data, complete CDI inputs, soil laboratory results or live climate feed are connected. Missing metrics are not estimated.
-
-Province selection identifies the advisory geography. Agricultural cards and charts remain national until a disaggregated dataset is supplied.`}
-          </div>
-          <Button asChild variant="outline">
-            <Link href="/reports" onClick={() => setHelp(false)}>
-              Explore source reports <ArrowRight />
-            </Link>
-          </Button>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-export function PageTitle({
-  eyebrow,
-  title,
-  description,
-  children,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-  children?: ReactNode;
-}) {
-  return (
-    <div className="title-row">
-      <div>
-        <div className="eyebrow">{eyebrow}</div>
-        <h1>{title}</h1>
-        <p className="subtitle">{description}</p>
-      </div>
-      {children && <div className="title-actions">{children}</div>}
-    </div>
-  );
-}
-
-export function Panel({
-  title,
-  description,
-  action,
-  children,
-  className = "",
-}: {
-  title: string;
-  description?: string;
-  action?: ReactNode;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <section className={`panel ${className}`}>
-      <div className="panel-head">
-        <div>
-          <h2>{title}</h2>
-          {description && <p>{description}</p>}
-        </div>
-        {action}
-      </div>
-      {children}
-    </section>
-  );
-}
 
 export function Metrics() {
   return (
@@ -412,9 +113,7 @@ export function Metrics() {
           </div>
           <div className="kpi-value">{x.value}</div>
           <div className="kpi-foot">
-            <span className={`pill ${x.warning ? "warning" : ""}`}>
-              {x.badge}
-            </span>
+            <span className={`pill ${x.warning ? "warning" : ""}`}>{x.badge}</span>
             <span>{x.foot}</span>
           </div>
         </div>
@@ -452,9 +151,7 @@ export function ExportDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>
-            Source-backed draft for review before distribution.
-          </DialogDescription>
+          <DialogDescription>Source-backed draft for review before distribution.</DialogDescription>
         </DialogHeader>
         <div className="document-preview">{text}</div>
         <div className="dialog-actions">
@@ -466,9 +163,7 @@ export function ExportDialog({
                 setCopied(true);
                 toast.success("Summary copied");
               } catch {
-                toast.error(
-                  "Clipboard unavailable. Select and copy the summary.",
-                );
+                toast.error("Clipboard unavailable. Select and copy the summary.");
               }
             }}
           >
@@ -491,16 +186,14 @@ export function ExportDialog({
 }
 
 export function Market() {
-  const { region, setRegion, season, setSeason, category, setCategory, search } =
-    useDashboard();
+  const { region, setRegion, season, setSeason, category, setCategory, search } = useDashboard();
   const [advisory, setAdvisory] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
   const filtered = crops.filter(
     (c) =>
       (category === "All crops" || c.category === category) &&
-      (season === "All seasons" ||
-        c.season === season.replace("Season ", "")) &&
+      (season === "All seasons" || c.season === season.replace("Season ", "")) &&
       c.name.toLowerCase().includes(search.toLowerCase()),
   );
   const shown = expanded ? filtered : filtered.slice(0, 5);
@@ -554,9 +247,7 @@ export function Market() {
             and where the next opportunity lies.
           </p>
         </div>
-        <div className="banner-source">
-          Agricultural Household Survey · 2024
-        </div>
+        <div className="banner-source">Agricultural Household Survey · 2024</div>
       </div>
       <div className="filter-row">
         <span className="filter-label">
@@ -581,27 +272,14 @@ export function Market() {
           label="Season"
           value={season}
           onChange={setSeason}
-          options={[
-            "All seasons",
-            "Season A",
-            "Season B",
-            "Season C",
-            "Annual",
-          ]}
+          options={["All seasons", "Season A", "Season B", "Season C", "Annual"]}
           className="filter-select"
         />
         <Choice
           label="Crop category"
           value={category}
           onChange={setCategory}
-          options={[
-            "All crops",
-            "Cereals",
-            "Legumes",
-            "Fruits",
-            "Roots & tubers",
-            "Vegetables",
-          ]}
+          options={["All crops", "Cereals", "Legumes", "Fruits", "Roots & tubers", "Vegetables"]}
           className="filter-select"
         />
         <Button
@@ -632,11 +310,7 @@ export function Market() {
         >
           <div className="map-panel">
             <div className="map-canvas">
-              <Suspense
-                fallback={
-                  <div className="empty-state">Loading Rwanda map…</div>
-                }
-              >
+              <Suspense fallback={<div className="empty-state">Loading Rwanda map…</div>}>
                 <ProvinceMap />
               </Suspense>
               <span className="map-label north">Northern</span>
@@ -698,9 +372,7 @@ export function Market() {
                     </td>
                     <td>
                       <span className="badge">
-                        {c.season === "Annual"
-                          ? "Annual"
-                          : `Season ${c.season}`}
+                        {c.season === "Annual" ? "Annual" : `Season ${c.season}`}
                       </span>
                     </td>
                     <td className="text-muted-foreground">{c.category}</td>
@@ -708,9 +380,7 @@ export function Market() {
                 ))}
               </tbody>
             </table>
-            {!shown.length && (
-              <div className="empty-state">No crops match your search.</div>
-            )}
+            {!shown.length && <div className="empty-state">No crops match your search.</div>}
           </div>
           <div className="table-footer">
             <span>
@@ -728,13 +398,7 @@ export function Market() {
             {opportunities.map((o) => (
               <div key={o.name} className="opportunity-item">
                 <span className="opportunity-icon">
-                  {o.icon === "fish" ? (
-                    <Fish />
-                  ) : o.icon === "oil" ? (
-                    <Droplets />
-                  ) : (
-                    <Wheat />
-                  )}
+                  {o.icon === "fish" ? <Fish /> : o.icon === "oil" ? <Droplets /> : <Wheat />}
                 </span>
                 <div className="opportunity-copy">
                   <div className="opportunity-title">
@@ -799,22 +463,16 @@ export function Opportunities() {
       </PageTitle>
       <div className="section-note">
         <Info />
-        National import dependency identifies sectors for investigation. A
-        district-level market gap or promotion score cannot be calculated without
-        additional supply, demand and suitability data.
+        National import dependency identifies sectors for investigation. A district-level market gap
+        or promotion score cannot be calculated without additional supply, demand and suitability
+        data.
       </div>
       <div className="report-grid">
         {opportunities.map((o) => (
           <section key={o.name} className="panel campaign-card">
             <div className="campaign-head">
               <span className="opportunity-icon">
-                {o.icon === "fish" ? (
-                  <Fish />
-                ) : o.icon === "oil" ? (
-                  <Droplets />
-                ) : (
-                  <Wheat />
-                )}
+                {o.icon === "fish" ? <Fish /> : o.icon === "oil" ? <Droplets /> : <Wheat />}
               </span>
               <span className="badge amber">{o.priority}</span>
             </div>
@@ -826,11 +484,7 @@ export function Opportunities() {
               <br />
               Potential focus: {o.crop}.
             </p>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setSelected(o.name)}
-            >
+            <Button variant="outline" className="w-full" onClick={() => setSelected(o.name)}>
               <Mail />
               Prepare campaign brief
             </Button>
@@ -858,8 +512,7 @@ export function Opportunities() {
                 </div>
                 <progress className="meter" value={n.value} max={n.target} />
                 <p className="text-[10px] text-muted-foreground mt-2">
-                  {((100 * n.value) / n.target).toFixed(1)}% of recommended
-                  intake
+                  {((100 * n.value) / n.target).toFixed(1)}% of recommended intake
                 </p>
               </div>
             ))}
@@ -883,13 +536,13 @@ export function Opportunities() {
               </div>
             ))}
             <p className="text-[10px] text-muted-foreground leading-relaxed">
-              FBS key findings (p. 10): carbs 77.8%, fat 12.0%. Table 7 (p.
-              18) differs: 77.7% and 12.2%.
+              FBS key findings (p. 10): carbs 77.8%, fat 12.0%. Table 7 (p. 18) differs: 77.7% and
+              12.2%.
             </p>
             <div className="section-note mt-4 mb-0">
               <Leaf />
-              Prioritize nutrient access alongside crop volume. Oilseeds,
-              legumes and diversified food supply merit local assessment.
+              Prioritize nutrient access alongside crop volume. Oilseeds, legumes and diversified
+              food supply merit local assessment.
             </div>
           </div>
         </Panel>
@@ -941,8 +594,7 @@ export function Advisory() {
         const index = keys.indexOf("ph");
         if (index < 0) throw Error("CSV requires a ph column");
         const p = Number(values[index]);
-        if (!Number.isFinite(p) || p < 0 || p > 14)
-          throw Error("pH must be between 0 and 14");
+        if (!Number.isFinite(p) || p < 0 || p > 14) throw Error("pH must be between 0 and 14");
         setPh(String(p));
         const r = keys.indexOf("rainfall");
         if (r >= 0) setRain((values[r] ?? "").trim());
@@ -952,9 +604,7 @@ export function Advisory() {
       setUploaded(file.name);
       toast.success("Soil measurements imported");
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Could not read soil test",
-      );
+      toast.error(error instanceof Error ? error.message : "Could not read soil test");
     }
   }
 
@@ -972,15 +622,11 @@ export function Advisory() {
       </PageTitle>
       <div className="section-note">
         <Info />
-        No live weather or validated crop catalog is connected. Soil inputs are
-        user-reported; crop and fertilizer recommendations require
-        extension-officer validation.
+        No live weather or validated crop catalog is connected. Soil inputs are user-reported; crop
+        and fertilizer recommendations require extension-officer validation.
       </div>
       <div className="advisory-layout">
-        <Panel
-          title="Your field profile"
-          description="Advisory geography & plot conditions"
-        >
+        <Panel title="Your field profile" description="Advisory geography & plot conditions">
           <div className="panel-body form-grid">
             <div className="form-field">
               <label>Province</label>
@@ -997,13 +643,7 @@ export function Advisory() {
                 label="Advisory season"
                 value={season}
                 onChange={setSeason}
-                options={[
-                  "All seasons",
-                  "Season A",
-                  "Season B",
-                  "Season C",
-                  "Annual",
-                ]}
+                options={["All seasons", "Season A", "Season B", "Season C", "Annual"]}
               />
             </div>
             <div className="form-field">
@@ -1060,10 +700,7 @@ export function Advisory() {
             </div>
             <div className="form-field">
               <label>
-                Yield target{" "}
-                <span className="float-right text-primary">
-                  {yieldTarget[0]} t/ha
-                </span>
+                Yield target <span className="float-right text-primary">{yieldTarget[0]} t/ha</span>
               </label>
               <Slider
                 aria-label="Yield target"
@@ -1077,11 +714,7 @@ export function Advisory() {
             </div>
             <div className="flex items-center justify-between text-xs">
               <label htmlFor="irrigation">Irrigation available</label>
-              <Switch
-                id="irrigation"
-                checked={irrigation}
-                onCheckedChange={setIrrigation}
-              />
+              <Switch id="irrigation" checked={irrigation} onCheckedChange={setIrrigation} />
             </div>
             <Button onClick={() => setOpen(true)}>
               Prepare assessment <ArrowRight />
@@ -1143,9 +776,7 @@ export function Advisory() {
 export function Reports() {
   const { search } = useDashboard();
   const filtered = sources.filter((s) =>
-    (s.name + " " + s.tag + " " + s.period)
-      .toLowerCase()
-      .includes(search.toLowerCase()),
+    (s.name + " " + s.tag + " " + s.period).toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -1175,9 +806,8 @@ export function Reports() {
       </PageTitle>
       <div className="section-note">
         <ShieldCheck />
-        Reports retain their original publication labels. The 2025 Food Balance
-        Sheets edition includes 2025 statistics and historical comparisons; these
-        are not live 2026 observations.
+        Reports retain their original publication labels. The 2025 Food Balance Sheets edition
+        includes 2025 statistics and historical comparisons; these are not live 2026 observations.
       </div>
       <div className="report-grid">
         {filtered.map((s) => (
@@ -1194,16 +824,13 @@ export function Reports() {
             <p>{s.description}</p>
             <Button variant="outline" asChild>
               <a href={s.url} target="_blank" rel="noreferrer">
-                Open {s.tag === "XLSX" ? "spreadsheet" : "source report"}{" "}
-                <ArrowUpRight />
+                Open {s.tag === "XLSX" ? "spreadsheet" : "source report"} <ArrowUpRight />
               </a>
             </Button>
           </article>
         ))}
       </div>
-      {!filtered.length && (
-        <div className="empty-state">No source reports match your search.</div>
-      )}
+      {!filtered.length && <div className="empty-state">No source reports match your search.</div>}
     </Shell>
   );
 }
@@ -1228,20 +855,13 @@ export function SettingsPage() {
             <div className="settings-row">
               <div>
                 <h3>Workspace role</h3>
-                <p>
-                  Role context for prepared documents; not an access permission.
-                </p>
+                <p>Role context for prepared documents; not an access permission.</p>
               </div>
               <Choice
                 label="Workspace role"
                 value={role}
                 onChange={setRole}
-                options={[
-                  "NISR Analyst",
-                  "MINAGRI Officer",
-                  "District Officer",
-                  "Farmer",
-                ]}
+                options={["NISR Analyst", "MINAGRI Officer", "District Officer", "Farmer"]}
               />
             </div>
             <div className="settings-row">
@@ -1259,10 +879,7 @@ export function SettingsPage() {
             <div className="settings-row">
               <div>
                 <h3>Report review reminders</h3>
-                <p>
-                  Add a verification checklist to your downloadable workspace
-                  note.
-                </p>
+                <p>Add a verification checklist to your downloadable workspace note.</p>
               </div>
               <Switch
                 aria-label="Report review reminders"

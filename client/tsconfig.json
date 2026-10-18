@@ -24,6 +24,7 @@
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "paths": {
+      "@/app/*": ["./app/*"],
       "@/*": ["./src/*"]
     }
   },
