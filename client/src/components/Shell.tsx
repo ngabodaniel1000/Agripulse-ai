@@ -66,48 +66,49 @@ export interface NavGroup {
 
 export const NAV_GROUPS: NavGroup[] = [
   {
-    label: "AGRICULTURAL INTELLIGENCE",
+    label: "AI FARM DECISIONS",
     items: [
-      { to: "/", name: "Market dominance", icon: BarChart3 },
-      { to: "/planner", name: "Planner dashboard", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "FARM DECISIONS",
-    items: [
-      { to: "/crop-analysis", name: "Crop & input analysis", icon: Sprout },
-      { to: "/input-combinations", name: "Input combinations", icon: Layers },
+      { to: "/", name: "Crop & input analysis", icon: Sprout },
       { to: "/yield-prediction", name: "Yield prediction", icon: Gauge },
-      { to: "/weather", name: "Weather intelligence", icon: CloudRain },
-    ],
-  },
-  {
-    label: "FARM OPERATIONS",
-    items: [
-      { to: "/farm-performance", name: "Farm performance", icon: TrendingUp },
-      { to: "/post-harvest", name: "Post-harvest analyzer", icon: PackageOpen },
       { to: "/sell-or-store", name: "Sell vs store", icon: Store },
-      { to: "/farmer-profile", name: "Farmer profile", icon: User },
     ],
   },
-  {
+    {
     label: "MARKET & GEOGRAPHY",
     items: [
       { to: "/market-prices", name: "Market prices", icon: Wheat },
-      { to: "/map", name: "Rwanda map", icon: MapIcon },
-      { to: "/alerts", name: "Agricultural alerts", icon: Bell, count: 4 },
+      // { to: "/map", name: "Rwanda map", icon: MapIcon },
+      // { to: "/alerts", name: "Agricultural alerts", icon: Bell, count: 4 },
+      { to: "/weather", name: "Weather intelligence", icon: CloudRain },
+      { to: "/market-dominance", name: "Market dominance", icon: BarChart3 },
     ],
   },
-  {
-    label: "EVIDENCE & LEARNING",
-    items: [
-      { to: "/explainable-ai", name: "Explainable AI", icon: Brain },
-      { to: "/analysis-reports", name: "Analytical reports", icon: ClipboardList },
-      { to: "/opportunities", name: "Under-supplied crops", icon: Sprout, count: 3 },
-      { to: "/advisory", name: "Soil–climate advisory", icon: Layers },
-      { to: "/reports", name: "Source reports", icon: FileText },
-    ],
-  },
+  // {
+  //   label: "AGRICULTURAL INTELLIGENCE",
+  //   items: [
+  //     { to: "/market-dominance", name: "Market dominance", icon: BarChart3 },
+  //     { to: "/planner", name: "Planner dashboard", icon: LayoutDashboard },
+  //   ],
+  // },
+  // {
+  //   label: "FARM OPERATIONS",
+  //   items: [
+  //     { to: "/farm-performance", name: "Farm performance", icon: TrendingUp },
+  //     { to: "/post-harvest", name: "Post-harvest analyzer", icon: PackageOpen },
+  //     { to: "/farmer-profile", name: "Farmer profile", icon: User },
+  //   ],
+  // },
+
+  // {
+  //   label: "EVIDENCE & LEARNING",
+  //   items: [
+  //     { to: "/explainable-ai", name: "Explainable AI", icon: Brain },
+  //     { to: "/analysis-reports", name: "Analytical reports", icon: ClipboardList },
+  //     { to: "/opportunities", name: "Under-supplied crops", icon: Sprout, count: 3 },
+  //     { to: "/advisory", name: "Soil–climate advisory", icon: Layers },
+  //     { to: "/reports", name: "Source reports", icon: FileText },
+  //   ],
+  // },
 ];
 
 export const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((g) => g.items);
@@ -187,8 +188,8 @@ export function Shell({ children }: { children: ReactNode }) {
             </nav>
           </div>
         ))}
-        <div className="nav-label">WORKSPACE</div>
-        <Link
+        {/* <div className="nav-label">WORKSPACE</div> */}
+        {/* <Link
           href="/settings"
           className={`nav-link ${path === "/settings" ? "active" : ""}`}
           onClick={() => setMobile(false)}
@@ -203,24 +204,24 @@ export function Shell({ children }: { children: ReactNode }) {
         >
           <CircleHelp />
           Help & data guide
-        </Button>
+        </Button> */}
         <div className="sidebar-bottom">
-          <div className="data-status">
+          {/* <div className="data-status">
             <span className="status-dot" />
             <strong className="text-xs font-medium">Official report sources</strong>
             <p>9 documents · 2022–2025 editions</p>
             <Link href="/reports" className="text-primary text-[10px] mt-2 flex items-center gap-1">
               View data sources <ArrowUpRight size={12} />
             </Link>
-          </div>
-          <div className="data-status sim-status">
+          </div> */}
+          {/* <div className="data-status sim-status">
             <span className="sim-dot" />
             <strong className="text-xs font-medium">Simulated demonstration</strong>
             <p>
               Farm, weather, price and yield figures in the new modules are simulated, not verified
               statistics.
             </p>
-          </div>
+          </div> */}
           <div className="profile">
             <div className="avatar">NA</div>
             <div>
@@ -276,14 +277,14 @@ export function Shell({ children }: { children: ReactNode }) {
         <main className="page">
           {children}
           <footer className="footer">
-            <div className="footer-sources">
+            {/* <div className="footer-sources">
               <span>DATA SOURCES</span>
               {["AHS 2024", "FBS 2025 edition", "IBES 2024", "RPHC 2022", "Trade 2025"].map((x) => (
                 <Link key={x} href="/reports">
                   {x}
                 </Link>
               ))}
-            </div>
+            </div> */}
             <span>
               <ShieldCheck size={10} className="inline mr-1" />
               Report statistics + simulated module data · National coverage

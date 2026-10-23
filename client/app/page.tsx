@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Market } from "@/components/Dashboard";
+import { CropAnalysis } from "@/components/modules/CropAnalysis";
 
 export const metadata: Metadata = {
-  title: "Market Dominance",
+  title: "Smart Crop & Input Analysis",
   description:
-    "Explore Rwanda crop adoption, food self-sufficiency and import substitution opportunities from NISR reports.",
+    "Compare crops, seed, fertilizer and pesticide patterns against simulated reference yields for a Rwanda district and season.",
   openGraph: {
-    title: "Market Dominance | NISR Agricultural Intelligence",
+    title: "Smart Crop & Input Analysis | AgriPulse",
     description:
-      "Source-backed crop adoption and national agricultural decision support for Rwanda.",
+      "Plain-language crop, input and yield comparison with simulated data clearly labelled.",
     type: "website",
   },
   twitter: { card: "summary_large_image" },
 };
 
-export default function HomePage() {
-  return <Market />;
+export default function CropAnalysisPage() {
+  return <CropAnalysis />;
 }

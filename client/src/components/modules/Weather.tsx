@@ -94,7 +94,7 @@ export function Weather() {
           value={crop}
           onChange={setCrop}
           options={CROP_OPTIONS}
-          hint="Used to compare rainfall against the crop's water need."
+          // hint="Used to compare rainfall against the crop's water need."
         />
       </div>
 

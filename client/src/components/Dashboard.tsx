@@ -414,14 +414,14 @@ export function Market() {
               </div>
             ))}
           </div>
-          <div className="opportunity-action">
+          {/* <div className="opportunity-action">
             <span>FBS 2025 edition</span>
             <Button variant="link" size="sm" asChild>
               <Link href="/opportunities">
                 Explore opportunities <ArrowRight />
               </Link>
             </Button>
-          </div>
+          </div> */}
         </Panel>
       </div>
       <ExportDialog

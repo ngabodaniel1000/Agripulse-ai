@@ -118,7 +118,6 @@ export function MarketPrices() {
           value={season}
           onChange={(v) => setSeason(v as Season)}
           options={SEASON_OPTIONS}
-          hint="Sets the harvest-to-lean price band."
         />
       </div>
 
