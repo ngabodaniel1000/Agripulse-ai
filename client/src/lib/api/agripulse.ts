@@ -1,7 +1,6 @@
 // src/lib/api/agripulse.ts
 const API_BASE =
-  process.env.NEXT_PUBLIC_AGRIPULSE_API_URL ??
-  "https://agripulse-ai-pbyp.onrender.com";
+  process.env.NEXT_PUBLIC_AGRIPULSE_API_URL ?? "https://agripulse-ai-pbyp.onrender.com";
 
 export interface InputStrategy {
   improved_seed: 0 | 1;
@@ -228,7 +227,7 @@ export function estimateLossRate(
   const basePerWeek: Record<string, number> = {
     "Traditional granary": 0.015,
     "Hermetic bag": 0.002,
-    "Warehouse": 0.008,
+    Warehouse: 0.008,
     "Open air": 0.025,
     "Improved silo": 0.004,
   };
@@ -244,8 +243,7 @@ export function estimateLossRate(
   };
   const base = basePerWeek[storageMethod] ?? 0.01;
   const cropFactor = cropMult[crop] ?? 1.0;
-  const envFactor =
-    1.0 + Math.max(0, humidity - 70) * 0.01 + Math.max(0, temperature - 25) * 0.02;
+  const envFactor = 1.0 + Math.max(0, humidity - 70) * 0.01 + Math.max(0, temperature - 25) * 0.02;
   const weekly = base * cropFactor * envFactor;
   const total = (1 - Math.pow(1 - weekly, Math.max(0, weeks))) * 100;
   return Math.min(95, Math.max(0, total));
@@ -259,7 +257,7 @@ export function storageCostPerKgWeek(storageMethod: string): number {
   const costs: Record<string, number> = {
     "Traditional granary": 2,
     "Hermetic bag": 5,
-    "Warehouse": 10,
+    Warehouse: 10,
     "Open air": 1,
     "Improved silo": 8,
   };

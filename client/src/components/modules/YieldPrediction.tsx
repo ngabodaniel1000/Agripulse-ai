@@ -28,12 +28,7 @@ import {
   WhatThisMeans,
 } from "@/components/agri/ui";
 import { SOIL_TYPES } from "@/lib/analytics/yield";
-import {
-  formatNumber,
-  formatPct,
-  formatRwf,
-  toNumber,
-} from "@/lib/analytics/format";
+import { formatNumber, formatPct, formatRwf, toNumber } from "@/lib/analytics/format";
 import { CROP_NAMES, SEASON_LABELS } from "@/data/sim/crops";
 import { DISTRICT_NAMES, getDistrict } from "@/data/sim/districts";
 import { currentPrice } from "@/data/sim/market";
@@ -68,9 +63,7 @@ export function YieldPrediction() {
   const [district, setDistrict] = useState("Musanze");
   const [season, setSeason] = useState<Season>("A");
   const [farmSize, setFarmSize] = useState("1");
-  const [soil, setSoil] = useState<string>(
-    getDistrict("Musanze")?.dominantSoil ?? "Loam",
-  );
+  const [soil, setSoil] = useState<string>(getDistrict("Musanze")?.dominantSoil ?? "Loam");
   const [elevation, setElevation] = useState("1600");
   const [rainfall, setRainfall] = useState("450");
   const [temperature, setTemperature] = useState("21");
@@ -117,9 +110,7 @@ export function YieldPrediction() {
       used_agroforestry: (agroforestry ? 1 : 0) as 0 | 1,
     };
 
-    setLastRequest(
-      `${crop} · ${district} · Season ${season} · ${areaHa} ha · ${soil} soil`,
-    );
+    setLastRequest(`${crop} · ${district} · Season ${season} · ${areaHa} ha · ${soil} soil`);
 
     const res = await fetchYieldPredictor(payload);
 
@@ -166,9 +157,7 @@ export function YieldPrediction() {
   const upperKgHa = prediction?.yield_upper_kg_ha ?? 0;
   const confidence = prediction?.confidence_level_pct ?? 0;
   const uncertaintyPct =
-    predictedYield > 0
-      ? ((upperKgHa - lowerKgHa) / (2 * predictedYield)) * 100
-      : 0;
+    predictedYield > 0 ? ((upperKgHa - lowerKgHa) / (2 * predictedYield)) * 100 : 0;
   const totalProductionKg = predictedYield * areaHa;
   const grossValue = totalProductionKg * price;
 
@@ -227,12 +216,7 @@ export function YieldPrediction() {
     >
       {/* ─────────── 1. FILTERS (district, crop, season, soil, farm size) ─────────── */}
       <div className="filter-bar">
-        <SelectField
-          label="Crop"
-          value={crop}
-          onChange={setCrop}
-          options={CROP_OPTIONS}
-        />
+        <SelectField label="Crop" value={crop} onChange={setCrop} options={CROP_OPTIONS} />
         <SelectField
           label="District"
           value={district}
@@ -356,13 +340,10 @@ export function YieldPrediction() {
           />
         </div>
 
-
         {/* 2d. ✅ The PREDICT button — placed AFTER all inputs */}
         <div className="mt-5 flex flex-col gap-3 rounded-lg border-2 border-emerald-500/30 bg-emerald-50/40 p-4 dark:bg-emerald-950/10 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm">
-            <p className="font-semibold text-emerald-800 dark:text-emerald-300">
-              Ready to predict
-            </p>
+            <p className="font-semibold text-emerald-800 dark:text-emerald-300">Ready to predict</p>
             <p className="text-xs text-muted-foreground">
               {crop} · {district} · Season {season} · {areaHa} ha · {soil}
             </p>
@@ -395,8 +376,7 @@ export function YieldPrediction() {
               Fetching prediction + XAI explanation from the Flask engine.
             </p>
             <p className="text-xs text-muted-foreground">
-              First request after inactivity may take up to ~60s to wake the
-              server.
+              First request after inactivity may take up to ~60s to wake the server.
             </p>
           </div>
         </InfoNote>
@@ -409,12 +389,7 @@ export function YieldPrediction() {
               <AlertTriangle size={14} className="mt-0.5 shrink-0" />
               <span>{aiError}</span>
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={predictYield}
-              className="gap-1"
-            >
+            <Button variant="outline" size="sm" onClick={predictYield} className="gap-1">
               <RefreshCw size={12} /> Retry
             </Button>
           </div>
@@ -436,9 +411,7 @@ export function YieldPrediction() {
                 </p>
                 <p className="mt-1 text-4xl font-bold text-emerald-800 dark:text-emerald-300">
                   {formatNumber(predictedYield)}{" "}
-                  <span className="text-lg font-normal text-muted-foreground">
-                    kg/ha
-                  </span>
+                  <span className="text-lg font-normal text-muted-foreground">kg/ha</span>
                 </p>
                 <p className="mt-2 text-sm text-muted-foreground">
                   Confidence range:{" "}
@@ -469,17 +442,11 @@ export function YieldPrediction() {
           icon={Gauge}
           badge={prediction ? "AI prediction" : "Awaiting AI"}
           badgeTone={prediction ? "success" : "warning"}
-          hint={
-            prediction ? `${district} · Season ${season}` : "Click Predict Yield"
-          }
+          hint={prediction ? `${district} · Season ${season}` : "Click Predict Yield"}
         />
         <KpiCard
           label="Likely range"
-          value={
-            prediction
-              ? `${formatNumber(lowerKgHa)}–${formatNumber(upperKgHa)}`
-              : "—"
-          }
+          value={prediction ? `${formatNumber(lowerKgHa)}–${formatNumber(upperKgHa)}` : "—"}
           unit="kg/ha"
           icon={TrendingUp}
           hint={prediction ? `±${formatPct(uncertaintyPct, 0)}` : "Awaiting AI"}
@@ -509,17 +476,14 @@ export function YieldPrediction() {
         {!prediction || factorEntries.length === 0 ? (
           <div className="rounded-md border border-dashed border-border p-8 text-center">
             <p className="text-sm text-muted-foreground">
-              Click <strong>Predict Yield</strong> to see the AI factor
-              breakdown.
+              Click <strong>Predict Yield</strong> to see the AI factor breakdown.
             </p>
           </div>
         ) : (
           <div className="space-y-3">
             {factorEntries.map((f) => (
               <div key={f.label} className="flex items-center gap-3">
-                <span className="w-40 shrink-0 text-xs font-medium text-foreground">
-                  {f.label}
-                </span>
+                <span className="w-40 shrink-0 text-xs font-medium text-foreground">{f.label}</span>
                 <div className="relative h-6 flex-1 overflow-hidden rounded-md bg-muted">
                   <div
                     className="h-full rounded-md bg-gradient-to-r from-emerald-500 to-emerald-600"
@@ -537,17 +501,13 @@ export function YieldPrediction() {
         )}
         <WhatThisMeans>
           <p>
-            These are the model&apos;s{" "}
-            <strong>global feature importance</strong> weights — how much each
-            factor contributes to yield predictions across all training data.
-            Higher bars = stronger influence.
+            These are the model&apos;s <strong>global feature importance</strong> weights — how much
+            each factor contributes to yield predictions across all training data. Higher bars =
+            stronger influence.
           </p>
           <ul>
             <li>Weather, inputs, and location dominate the model.</li>
-            <li>
-              These are not per-row SHAP values; they show overall model
-              priorities.
-            </li>
+            <li>These are not per-row SHAP values; they show overall model priorities.</li>
             <li>Use them to guide which levers matter most.</li>
           </ul>
         </WhatThisMeans>
@@ -560,24 +520,20 @@ export function YieldPrediction() {
       >
         <ul className="panel-body list-disc space-y-1.5 pl-5 text-[11px] text-muted-foreground">
           <li>
-            Model trained on NISR AHS 2024 &amp; SAS 2026 distributions;
-            individual farm results will vary.
+            Model trained on NISR AHS 2024 &amp; SAS 2026 distributions; individual farm results
+            will vary.
           </li>
           <li>
-            Rainfall and temperature defaults use typical seasonal values for
-            Rwanda; override with measured values when available.
+            Rainfall and temperature defaults use typical seasonal values for Rwanda; override with
+            measured values when available.
           </li>
-          <li>
-            Confidence interval reflects input consistency and model
-            uncertainty.
-          </li>
+          <li>Confidence interval reflects input consistency and model uncertainty.</li>
           <li>Elevation is measured in metres above sea level for the plot.</li>
         </ul>
         <div className="mt-3">
           <InfoNote tone="warning" title="Use this as guidance, not a guarantee">
-            Combine this estimate with a soil test, an extension officer&apos;s
-            visit and your own records. Yield depends on weather, pests and
-            management that no model can fully capture.
+            Combine this estimate with a soil test, an extension officer&apos;s visit and your own
+            records. Yield depends on weather, pests and management that no model can fully capture.
           </InfoNote>
         </div>
         <p className="mt-3 text-[10px] text-muted-foreground">

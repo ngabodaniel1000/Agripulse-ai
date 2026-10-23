@@ -34,20 +34,9 @@ import {
 } from "@/components/agri/ui";
 import { BarCompare } from "@/components/agri/charts";
 import { districtYieldRanking, nationalYield } from "@/lib/analytics/analytics";
-import {
-  formatKg,
-  formatNumber,
-  formatPct,
-  formatRwf,
-  toNumber,
-} from "@/lib/analytics/format";
+import { formatKg, formatNumber, formatPct, formatRwf, toNumber } from "@/lib/analytics/format";
 import { CROP_NAMES, SEASON_LABELS } from "@/data/sim/crops";
-import {
-  DISTRICT_NAMES,
-  getDistrict,
-  provinceOf,
-  PROVINCE_LABELS,
-} from "@/data/sim/districts";
+import { DISTRICT_NAMES, getDistrict, provinceOf, PROVINCE_LABELS } from "@/data/sim/districts";
 import { INPUT_ADOPTION, INPUT_COSTS, PRACTICES } from "@/data/sim/inputs";
 import { currentPrice } from "@/data/sim/market";
 import type { Season } from "@/data/sim";
@@ -159,9 +148,7 @@ export function CropAnalysis() {
   const practices = PRACTICES[province];
 
   // AI state
-  const [aiRecommendations, setAiRecommendations] = useState<
-    InputRecommendation[] | null
-  >(null);
+  const [aiRecommendations, setAiRecommendations] = useState<InputRecommendation[] | null>(null);
   const [aiLoading, setAiLoading] = useState<boolean>(false);
   const [aiError, setAiError] = useState<string | null>(null);
   const [lastRequest, setLastRequest] = useState<string>("");
@@ -215,9 +202,7 @@ export function CropAnalysis() {
       farm_size_ha: areaHa,
       budget_level: budget,
     };
-    setLastRequest(
-      `${crop} · ${district} · Season ${season} · ${areaHa} ha · ${budget} budget`,
-    );
+    setLastRequest(`${crop} · ${district} · Season ${season} · ${areaHa} ha · ${budget} budget`);
 
     const res = await fetchInputOptimizer(payload);
 
@@ -242,9 +227,7 @@ export function CropAnalysis() {
   // ────────── Merge AI + pricing ──────────
   const results: PackageRow[] = useMemo(() => {
     return packages.map((pkg) => {
-      const match = aiRecommendations
-        ? pickBestMatch(pkg, aiRecommendations)
-        : null;
+      const match = aiRecommendations ? pickBestMatch(pkg, aiRecommendations) : null;
 
       const fromAI = Boolean(match);
       const predictedYieldKgHa = match?.expected_yield_kg_ha ?? 0;
@@ -252,15 +235,10 @@ export function CropAnalysis() {
       const upperKgHa = match?.yield_upper_kg_ha ?? 0;
       const totalProductionKg = predictedYieldKgHa * areaHa;
       const uncertaintyPct =
-        predictedYieldKgHa > 0
-          ? ((upperKgHa - lowerKgHa) / (2 * predictedYieldKgHa)) * 100
-          : 0;
+        predictedYieldKgHa > 0 ? ((upperKgHa - lowerKgHa) / (2 * predictedYieldKgHa)) * 100 : 0;
 
       const inputCostRwf = INPUT_COSTS.reduce(
-        (sum, cost) =>
-          pkg.flags[COST_FLAG[cost.key]]
-            ? sum + cost.costPerHaRwf * areaHa
-            : sum,
+        (sum, cost) => (pkg.flags[COST_FLAG[cost.key]] ? sum + cost.costPerHaRwf * areaHa : sum),
         0,
       );
 
@@ -287,20 +265,15 @@ export function CropAnalysis() {
   const baseline = results[0];
   const yieldLift =
     baseline.result.predictedYieldKgHa && improved.result.predictedYieldKgHa
-      ? ((improved.result.predictedYieldKgHa -
-          baseline.result.predictedYieldKgHa) /
+      ? ((improved.result.predictedYieldKgHa - baseline.result.predictedYieldKgHa) /
           baseline.result.predictedYieldKgHa) *
         100
       : 0;
 
   // Reference data
-  const ranking = useMemo(
-    () => districtYieldRanking(crop, season),
-    [crop, season],
-  );
+  const ranking = useMemo(() => districtYieldRanking(crop, season), [crop, season]);
   const national = nationalYield(crop, season);
-  const selectedRank =
-    ranking.find((r) => r.district === district)?.rank ?? null;
+  const selectedRank = ranking.find((r) => r.district === district)?.rank ?? null;
   const price = currentPrice(crop, district);
 
   const adoptionChart = [
@@ -317,8 +290,7 @@ export function CropAnalysis() {
     {
       key: "district",
       header: "District",
-      render: (r) =>
-        r.district === district ? <strong>{r.district}</strong> : r.district,
+      render: (r) => (r.district === district ? <strong>{r.district}</strong> : r.district),
     },
     { key: "province", header: "Province" },
     {
@@ -386,13 +358,16 @@ export function CropAnalysis() {
           options={BUDGET_OPTIONS}
         />
         <div className="filter-bar-actions">
-          <Button variant="outline" onClick={() => {
-            setCrop("Maize");
-            setDistrict("Musanze");
-            setSeason("A");
-            setFarmSize("1");
-            setBudget("medium");
-          }}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setCrop("Maize");
+              setDistrict("Musanze");
+              setSeason("A");
+              setFarmSize("1");
+              setBudget("medium");
+            }}
+          >
             Reset
           </Button>
         </div>
@@ -406,11 +381,7 @@ export function CropAnalysis() {
             {lastRequest || "Ready to query the Flask backend"}
           </p>
         </div>
-        <Button
-          onClick={loadAiRecommendations}
-          disabled={aiLoading}
-          className="gap-2"
-        >
+        <Button onClick={loadAiRecommendations} disabled={aiLoading} className="gap-2">
           {aiLoading ? (
             <>
               <Loader2 size={14} className="animate-spin" /> Querying AI…
@@ -588,9 +559,8 @@ export function CropAnalysis() {
           <InfoNote tone="success" title="Main takeaway">
             {improved.fromAI && baseline.fromAI ? (
               <>
-                The improved package is estimated at{" "}
-                <strong>{formatPct(yieldLift, 0)}</strong> more yield per hectare than a
-                low-input package in this AI estimate, but it adds about{" "}
+                The improved package is estimated at <strong>{formatPct(yieldLift, 0)}</strong> more
+                yield per hectare than a low-input package in this AI estimate, but it adds about{" "}
                 <strong>{formatRwf(improved.inputCostRwf)}</strong> in input cost.
               </>
             ) : (
@@ -600,13 +570,17 @@ export function CropAnalysis() {
 
           <WhatThisMeans>
             <p>
-              Yield estimates come from an <strong>AI model</strong> trained on NISR AHS
-              2024 and SAS 2026 distributions and served by the AgriPulse Flask backend.
+              Yield estimates come from an <strong>AI model</strong> trained on NISR AHS 2024 and
+              SAS 2026 distributions and served by the AgriPulse Flask backend.
             </p>
             <ul>
-              <li>Predictions are GradientBoostingRegressor estimates with confidence intervals.</li>
+              <li>
+                Predictions are GradientBoostingRegressor estimates with confidence intervals.
+              </li>
               <li>Input costs are demonstration estimates, not quotas or shop prices.</li>
-              <li>Confirm varieties and application rates with an extension officer and a soil test.</li>
+              <li>
+                Confirm varieties and application rates with an extension officer and a soil test.
+              </li>
             </ul>
           </WhatThisMeans>
         </SectionCard>
@@ -641,9 +615,7 @@ export function CropAnalysis() {
             columns={rankColumns}
             rows={ranking.slice(0, 8)}
             caption={`National average ${formatNumber(national)} kg/ha${
-              selectedRank
-                ? ` · ${district} is ranked #${selectedRank} of ${ranking.length}`
-                : ""
+              selectedRank ? ` · ${district} is ranked #${selectedRank} of ${ranking.length}` : ""
             }`}
             exportName={`${crop}-district-yields`}
           />
@@ -668,8 +640,8 @@ export function CropAnalysis() {
           </div>
           <WhatThisMeans>
             <p>
-              Costs are per-hectare demonstration estimates scaled to your farm size.
-              Real prices depend on the agro-dealer, distance and season.
+              Costs are per-hectare demonstration estimates scaled to your farm size. Real prices
+              depend on the agro-dealer, distance and season.
             </p>
           </WhatThisMeans>
         </SectionCard>
@@ -685,9 +657,7 @@ export function CropAnalysis() {
 function FlagRow({ active, label }: { active: boolean; label: string }) {
   return (
     <div className="flex items-center justify-between text-xs">
-      <span className={active ? "text-foreground" : "text-muted-foreground"}>
-        {label}
-      </span>
+      <span className={active ? "text-foreground" : "text-muted-foreground"}>{label}</span>
       {active ? (
         <span className="flex items-center gap-1 font-medium text-emerald-600 dark:text-emerald-400">
           <Check size={12} strokeWidth={3} /> Yes

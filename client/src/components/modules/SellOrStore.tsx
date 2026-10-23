@@ -25,17 +25,9 @@ import {
   StatusBadge,
   WhatThisMeans,
 } from "@/components/agri/ui";
-import {
-  RECOMMENDATION_META,
-  STORAGE_METHOD_NAMES,
-} from "@/lib/analytics/storage";
+import { RECOMMENDATION_META, STORAGE_METHOD_NAMES } from "@/lib/analytics/storage";
 import type { StoreRecommendation } from "@/lib/analytics/types";
-import {
-  formatNumber,
-  formatPct,
-  formatRwf,
-  toNumber,
-} from "@/lib/analytics/format";
+import { formatNumber, formatPct, formatRwf, toNumber } from "@/lib/analytics/format";
 import { CROP_NAMES } from "@/data/sim/crops";
 import { DISTRICT_NAMES } from "@/data/sim/districts";
 import { currentPrice } from "@/data/sim/market";
@@ -90,9 +82,7 @@ export function SellOrStore() {
   const [district, setDistrict] = useState("Musanze");
   const [season, setSeason] = useState<"A" | "B" | "C">("A");
   const [quantity, setQuantity] = useState("1000");
-  const [price, setPrice] = useState(
-    String(currentPrice("Irish potato", "Musanze")),
-  );
+  const [price, setPrice] = useState(String(currentPrice("Irish potato", "Musanze")));
   const [method, setMethod] = useState("Hermetic bag");
   const [weeks, setWeeks] = useState("8");
   const [humidity, setHumidity] = useState("72");
@@ -107,13 +97,7 @@ export function SellOrStore() {
   // ────────── Derived loss estimate (shown before AI responds) ──────────
   const estimatedLossRate = useMemo(
     () =>
-      estimateLossRate(
-        method,
-        toNumber(weeks),
-        toNumber(humidity),
-        toNumber(temperature),
-        crop,
-      ),
+      estimateLossRate(method, toNumber(weeks), toNumber(humidity), toNumber(temperature), crop),
     [method, weeks, humidity, temperature, crop],
   );
 
@@ -141,13 +125,7 @@ export function SellOrStore() {
       storage_cost_per_kg_week: storageCostPerKgWeek(method),
       humidity_pct: humidityNum,
       temperature_c: tempNum,
-      total_loss_rate_pct: estimateLossRate(
-        method,
-        weeksNum,
-        humidityNum,
-        tempNum,
-        crop,
-      ),
+      total_loss_rate_pct: estimateLossRate(method, weeksNum, humidityNum, tempNum, crop),
     };
 
     const res = await fetchMarketIntelligence(payload);
@@ -159,18 +137,7 @@ export function SellOrStore() {
       setAiError(res.error ?? "AI engine did not return a result.");
     }
     setAiLoading(false);
-  }, [
-    district,
-    crop,
-    season,
-    quantity,
-    price,
-    trend,
-    method,
-    weeks,
-    humidity,
-    temperature,
-  ]);
+  }, [district, crop, season, quantity, price, trend, method, weeks, humidity, temperature]);
 
   // Auto-run on first mount only
   const [hasAutoLoaded, setHasAutoLoaded] = useState(false);
@@ -188,15 +155,11 @@ export function SellOrStore() {
   );
 
   const meta =
-    RECOMMENDATION_META[storeRecommendationKey] ??
-    RECOMMENDATION_META["NOT_ENOUGH_INFORMATION"];
+    RECOMMENDATION_META[storeRecommendationKey] ?? RECOMMENDATION_META["NOT_ENOUGH_INFORMATION"];
 
-  const riskMeta = prediction
-    ? RISK_META[prediction.post_harvest_loss_risk]
-    : null;
+  const riskMeta = prediction ? RISK_META[prediction.post_harvest_loss_risk] : null;
 
-  const better =
-    storeRecommendationKey === "STORE_IF_SAFE" ? "store" : "sell";
+  const better = storeRecommendationKey === "STORE_IF_SAFE" ? "store" : "sell";
 
   const qtyNum = toNumber(quantity);
   const weeksNum = toNumber(weeks);
@@ -304,10 +267,7 @@ export function SellOrStore() {
           // hint="Negative if you expect prices to fall."
         />
         <div className="filter-bar-actions">
-          <Button
-            variant="outline"
-            onClick={() => setPrice(String(currentPrice(crop, district)))}
-          >
+          <Button variant="outline" onClick={() => setPrice(String(currentPrice(crop, district)))}>
             Use reference price
           </Button>
         </div>
@@ -324,9 +284,7 @@ export function SellOrStore() {
       >
         <div className="flex flex-col gap-3 rounded-lg border-2 border-emerald-500/30 bg-emerald-50/40 p-4 dark:bg-emerald-950/10 sm:flex-row sm:items-center sm:justify-between">
           <div className="text-sm">
-            <p className="font-semibold text-emerald-800 dark:text-emerald-300">
-              Ready to analyze
-            </p>
+            <p className="font-semibold text-emerald-800 dark:text-emerald-300">Ready to analyze</p>
             <p className="text-xs text-muted-foreground">
               {crop} · {district} · {qtyNum} kg · {weeksNum}w · {method}
             </p>
@@ -404,9 +362,7 @@ export function SellOrStore() {
         />
         <KpiCard
           label="Net gain from storing"
-          value={
-            prediction ? formatNumber(prediction.net_gain_from_storing_rwf) : "—"
-          }
+          value={prediction ? formatNumber(prediction.net_gain_from_storing_rwf) : "—"}
           unit="RWF"
           icon={Scale}
           valueTone={
@@ -428,9 +384,7 @@ export function SellOrStore() {
           label="Expected spoilage"
           value={prediction ? formatPct(prediction.loss_rate_pct, 1) : "—"}
           icon={PackageOpen}
-          valueTone={
-            prediction && prediction.loss_rate_pct > 15 ? "destructive" : "default"
-          }
+          valueTone={prediction && prediction.loss_rate_pct > 15 ? "destructive" : "default"}
           hint={prediction ? `${formatNumber(lostKg)} kg lost` : "Awaiting AI"}
         />
       </KpiGrid>
@@ -461,9 +415,7 @@ export function SellOrStore() {
             >
               {prediction
                 ? `The AI model predicts a ${
-                    prediction.net_gain_from_storing_rwf > 0
-                      ? "net gain"
-                      : "net loss"
+                    prediction.net_gain_from_storing_rwf > 0 ? "net gain" : "net loss"
                   } of ${formatRwf(
                     Math.abs(prediction.net_gain_from_storing_rwf),
                   )} from storing. Post-harvest loss risk is ${prediction.post_harvest_loss_risk.toLowerCase()}.`
@@ -475,11 +427,10 @@ export function SellOrStore() {
               <ul className="list-disc space-y-1.5 pl-5 text-[11px] text-muted-foreground">
                 {storeRecommendationKey === "STORE_IF_SAFE" ? (
                   <>
+                    <li>Ensure the {method.toLowerCase()} is dry, sealed and checked weekly.</li>
                     <li>
-                      Ensure the {method.toLowerCase()} is dry, sealed and checked weekly.
-                    </li>
-                    <li>
-                      Monitor the local market — the model expects {formatPct(toNumber(trend), 0)} change.
+                      Monitor the local market — the model expects {formatPct(toNumber(trend), 0)}{" "}
+                      change.
                     </li>
                     <li>Split the harvest between selling now and storing for flexibility.</li>
                   </>
@@ -492,8 +443,7 @@ export function SellOrStore() {
                 ) : storeRecommendationKey === "SELL_NOW" ? (
                   <>
                     <li>
-                      Sell now to lock in{" "}
-                      {formatRwf(prediction?.revenue_if_sell_now_rwf ?? 0)}.
+                      Sell now to lock in {formatRwf(prediction?.revenue_if_sell_now_rwf ?? 0)}.
                     </li>
                     <li>Use proceeds to cover input costs for the next season.</li>
                     <li>
@@ -504,7 +454,9 @@ export function SellOrStore() {
                 ) : (
                   <>
                     <li>Enter quantity, price and storage duration above.</li>
-                    <li>Click <strong>Analyze Sell vs Store</strong>.</li>
+                    <li>
+                      Click <strong>Analyze Sell vs Store</strong>.
+                    </li>
                   </>
                 )}
               </ul>
@@ -546,14 +498,10 @@ export function SellOrStore() {
                   </tr>
                   <tr>
                     <td>Price per kg</td>
-                    <td style={{ textAlign: "right" }}>
-                      {formatNumber(toNumber(price))} RWF
-                    </td>
+                    <td style={{ textAlign: "right" }}>{formatNumber(toNumber(price))} RWF</td>
                     <td style={{ textAlign: "right" }}>
                       {prediction
-                        ? formatNumber(
-                            prediction.revenue_if_store_rwf / Math.max(1, remainingKg),
-                          )
+                        ? formatNumber(prediction.revenue_if_store_rwf / Math.max(1, remainingKg))
                         : "—"}{" "}
                       RWF
                     </td>
@@ -581,15 +529,11 @@ export function SellOrStore() {
             </div>
             {riskMeta && (
               <div className="mt-3">
-                <InfoNote
-                  tone={riskMeta.tone}
-                  title={`Storage risk: ${riskMeta.label}`}
-                >
+                <InfoNote tone={riskMeta.tone} title={`Storage risk: ${riskMeta.label}`}>
                   Weekly spoilage for {method} at {humidity}% humidity and {temperature}°C is
                   estimated at{" "}
                   {formatPct(
-                    (prediction?.loss_rate_pct ?? estimatedLossRate) /
-                      Math.max(1, weeksNum),
+                    (prediction?.loss_rate_pct ?? estimatedLossRate) / Math.max(1, weeksNum),
                     2,
                   )}{" "}
                   per week.

@@ -73,7 +73,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { to: "/sell-or-store", name: "Sell vs store", icon: Store },
     ],
   },
-    {
+  {
     label: "MARKET & GEOGRAPHY",
     items: [
       { to: "/market-prices", name: "Market prices", icon: Wheat },
