@@ -261,7 +261,7 @@ export function Shell({ children }: { children: ReactNode }) {
               <Globe2 size={14} /> English
             </span>
             <span className="h-5 border-l border-border" />
-            <Button
+            {/* <Button
               variant="ghost"
               size="icon"
               className="notification"
@@ -270,7 +270,7 @@ export function Shell({ children }: { children: ReactNode }) {
               onClick={() => setAlerts(true)}
             >
               <Bell size={17} />
-            </Button>
+            </Button> */}
             <div className="avatar">NA</div>
           </div>
         </header>

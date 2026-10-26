@@ -315,17 +315,6 @@ export function CropAnalysis() {
       description="Choose a crop, district and season to compare seed, fertilizer and pesticide patterns against reference yields — in plain numbers first."
       tone="field"
       readAloudText={readAloud}
-      actions={
-        <Button
-          asChild
-          variant="outline"
-          className="bg-transparent text-primary-foreground border-primary-foreground/40 hover:bg-primary-foreground/10 hover:text-primary-foreground"
-        >
-          <Link href="/input-combinations">
-            Compare input combinations <ArrowRight size={13} />
-          </Link>
-        </Button>
-      }
     >
       {/* ─────────── Filters ─────────── */}
       <div className="filter-bar">
