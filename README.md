@@ -22,7 +22,6 @@ Three AI engines work together to help smallholder farmers and agricultural plan
 10. [Deployment](#-deployment)
 11. [Roadmap](#-roadmap)
 12. [Credits & Data Sources](#-credits--data-sources)
-13. [License](#-license)
 
 ---
 
