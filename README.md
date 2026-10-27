@@ -728,13 +728,6 @@ curl -X POST https://agripulse-ai-pbyp.onrender.com/api/yield-predictor \
 - **Backend deployment:** https://agripulse-ai-pbyp.onrender.com
 - **Frontend deployment:** https://agripulse-ai-rwanda.vercel.app (or your domain)
 
----
-
-## 📄 License
-
-MIT License — see [`LICENSE`](LICENSE) for full text.
-
-This is a **non-commercial research and hackathon project**. NISR data usage is compliant with the National Data Archive terms (no redistribution of microdata, aggregated reporting only).
 
 ---
 
