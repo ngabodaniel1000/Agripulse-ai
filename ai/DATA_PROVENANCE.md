@@ -7,7 +7,6 @@ Our ML datasets are synthesized from NISR published aggregates. Specifically:
 - **Market prices** → Approximated from Rwanda e-Soko ranges (NISR market price dataset not included in provided reports).
 - **Weather** → Simulated; production system would use CHIRPS via Google Earth Engine.
 
-We do NOT claim to have NISR microdata. NISR microdata requires formal request via info@statistics.gov.rw.
 
 # Data Provenance — AgriPulse Rwanda AI Engines
 
@@ -20,11 +19,6 @@ aggregates from:
 - **SAS 2026 Season A** — Seasonal Agricultural Survey
 - **SAS 2026 Season B** — Seasonal Agricultural Survey
 
-They are **NOT** extracted from NISR microdata (which requires formal request
-to info@statistics.gov.rw). Individual rows are **Monte Carlo draws** from the
-distributions published in those reports, combined with plausible agronomic
-ranges for values NISR does not publish (input quantities, weather, market
-prices, post-harvest loss rates).
 
 ## Legend
 
